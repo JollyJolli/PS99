@@ -1,0 +1,69 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.card img {
+    max-width: 100%;
+    height: auto;
+}
+
+#searchContainer {
+    margin-bottom: 20px;
+}
+
+#searchInput {
+    width: 200px;
+    padding: 8px;
+    border-radius: 5px 0 0 5px;
+    border: 1px solid #ccc;
+}
+
+#searchButton {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 5px 5px 0;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+#clearSearchInput {
+    display: none;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 0 5px 5px 0;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+#paginationContainer {
+    margin-top: 20px;
+}
+
+.page-link {
+    margin-right: 5px;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+}
+
+.page-link.active {
+    background-color: #007bff;
+    color: #fff;
+}
