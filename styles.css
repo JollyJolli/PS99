@@ -1,28 +1,42 @@
+* {
+    box-sizing: border-box;
+}
+
 .container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
+    text-align: center;
 }
 
 .card-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
+    justify-content: center;
 }
 
 .card {
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 10px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.05);
 }
 
 .card img {
     max-width: 100%;
     height: auto;
+    border-radius: 5px;
 }
 
 #searchContainer {
     margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
 }
 
 #searchInput {
@@ -52,6 +66,8 @@
 
 #paginationContainer {
     margin-top: 20px;
+    display: flex;
+    justify-content: center;
 }
 
 .page-link {
@@ -61,6 +77,11 @@
     border-radius: 5px;
     text-decoration: none;
     color: #333;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.page-link:hover {
+    background-color: #f0f0f0;
 }
 
 .page-link.active {
