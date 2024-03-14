@@ -149,7 +149,7 @@
               currentPage = 1; // Resetear la página actual al realizar una nueva búsqueda
               displayPets(currentPage, results);
           } else {
-              displayPets(currentPage); // Mostrar todas las mascotas si la búsqueda está vacía
+              displayPets(currentPage); 
           }
       });
 
