@@ -190,4 +190,31 @@ document.addEventListener('DOMContentLoaded', function() {
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
+
+  const popupContainer = document.getElementById('popupContainer');
+  const popupImage = document.getElementById('popupImage');
+  const closePopup = document.getElementById('closePopup');
+
+  // Función para mostrar el popup con la imagen ampliada
+  function showPopup(imageSrc) {
+      popupImage.src = imageSrc;
+      popupContainer.style.display = 'flex';
+  }
+
+  // Función para cerrar el popup
+  function closePopupHandler() {
+      popupContainer.style.display = 'none';
+  }
+
+  // Escuchar clic en una imagen de mascota para mostrar el popup
+  petsContainer.addEventListener('click', function(event) {
+      if (event.target.tagName === 'IMG') {
+          const imageSrc = event.target.src;
+          showPopup(imageSrc);
+      }
+  });
+
+  // Escuchar clic en el botón de cerrar el popup
+  closePopup.addEventListener('click', closePopupHandler);
+  
 });
