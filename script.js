@@ -15,27 +15,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingContainer = document.getElementById('loadingContainer');
     loadingContainer.style.display = 'flex';
 
-    // Cargar los datos de ps.json, rap.json y exists.json simultáneamente
-    Promise.all([
-        fetch('/ps.json').then(response => response.json()),
-        fetch('/rap.json').then(response => response.json()),
-        fetch('/exists.json').then(response => response.json())
-    ])
-    .then(([petsResponse, rapResponse, existsResponse]) => {
-        petsData = petsResponse.data;
-        rapData = rapResponse.data;
-        existsData = existsResponse.data;
-        displayPets(currentPage);
-    })
-    .catch(error => {
-        console.error('Error al cargar los datos:', error);
-    })
-    .finally(() => {
-        // Ocultar pantalla de carga
-        loadingContainer.style.display = 'none';
-        contentContainer.style.visibility = 'visible';
-        contentContainer.style.opacity = '1';
-    });
+    // Cargar los datos de ps.json
+    fetch('/ps.json')
+        .then(response => response.json())
+        .then(jsonData => {
+            petsData = jsonData.data;
+            displayPets(currentPage);
+        })
+        .catch((error) => {
+            console.error('Error al cargar los datos de ps.json:', error);
+        })
+        .finally(() => {
+            // Ocultar pantalla de carga
+            loadingContainer.style.display = 'none';
+            contentContainer.style.visibility = 'visible';
+            contentContainer.style.opacity = '1';
+        });
+
+    // Cargar los datos de RAP
+    fetch('/rap.json')
+        .then(response => response.json())
+        .then(jsonData => {
+            rapData = jsonData.data;
+        })
+        .catch(error => {
+            console.error('Error al cargar los datos de RAP:', error);
+        });
+
+    // Cargar los datos de EXISTS
+    fetch('/exists.json')
+        .then(response => response.json())
+        .then(jsonData => {
+            existsData = jsonData.data;
+        })
+        .catch(error => {
+            console.error('Error al cargar los datos de EXISTS:', error);
+        });
 
     // Función para mostrar las mascotas en la página actual
     function displayPets(page, results = null) {
@@ -50,68 +65,94 @@ document.addEventListener('DOMContentLoaded', function() {
         renderPagination();
     }
 
-    // Función para crear una tarjeta de mascota
-    function createPetCard(pet) {
-        const card = document.createElement('div');
-        card.classList.add('card');
-        card.innerHTML = `
-            <img src="${pet.configData.thumbnail}" alt="${pet.configName}">
-            <h2>${pet.configName}</h2>
-            <p>${pet.configData.indexDesc}</p>
-        `;
+  // Función para crear una tarjeta de mascota
+  function createPetCard(pet) {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      card.innerHTML = `
+          <img src="${pet.configData.thumbnail}" alt="${pet.configName}">
+          <h2>${pet.configName}</h2>
+          <p>${pet.configData.indexDesc}</p>
+          <p>Category: ${pet.category}</p>
+      `;
 
-        // Obtener el valor correspondiente en RAP
-        const rapEntry = rapData.find(entry => entry.configData.id === pet.configName);
-        const rapValue = rapEntry ? rapEntry.value : null;
+      // Obtener el valor correspondiente en RAP
+      const rapEntry = rapData.find(entry => entry.configData.id === pet.configName);
+      const rapValue = rapEntry ? rapEntry.value : null;
 
-        // Obtener el valor correspondiente en EXISTS
-        const existsEntry = existsData.find(entry => entry.configData.id === pet.configName);
-        const existsValue = existsEntry ? existsEntry.value : null;
+      // Obtener el valor correspondiente en EXISTS
+      const existsEntry = existsData.find(entry => entry.configData.id === pet.configName);
+      const existsValue = existsEntry ? existsEntry.value : null;
 
-        // Agregar el valor de RAP a la tarjeta
-        if (rapValue !== null) {
-            const rapValueElement = document.createElement('p');
-            rapValueElement.innerHTML = `<i class="fas fa-diamond"></i> <b>RAP:</b> ${numberWithCommas(rapValue)}`;
-            card.appendChild(rapValueElement);
-        } else {
-            const rapValueElement = document.createElement('p');
-            rapValueElement.innerHTML = '<b>RAP:</b> N/A';
-            card.appendChild(rapValueElement);
-        }
+      // Agregar el valor de RAP a la tarjeta
+      if (rapValue !== null) {
+          const rapValueElement = document.createElement('p');
+          rapValueElement.innerHTML = `<i class="fas fa-diamond"></i> <b>RAP:</b> ${numberWithCommas(rapValue)}`;
+          card.appendChild(rapValueElement);
+      } else {
+          const rapValueElement = document.createElement('p');
+          rapValueElement.innerHTML = '<b>RAP:</b> N/A';
+          card.appendChild(rapValueElement);
+      }
 
-        // Agregar el valor de EXISTS a la tarjeta
-        if (existsValue !== null) {
-            const existsValueElement = document.createElement('p');
-            existsValueElement.innerHTML = `<b>Exists:</b> ${numberWithCommas(existsValue)}`;
-            card.appendChild(existsValueElement);
-        } else {
-            const existsValueElement = document.createElement('p');
-            existsValueElement.innerHTML = '<b>Exists:</b> N/A';
-            card.appendChild(existsValueElement);
-        }
+      // Agregar el valor de EXISTS a la tarjeta
+      if (existsValue !== null) {
+          const existsValueElement = document.createElement('p');
+          existsValueElement.innerHTML = `<i class="fas fa-check"></i> <b>Exists:</b> ${numberWithCommas(existsValue)}`;
+          card.appendChild(existsValueElement);
+      } else {
+          const existsValueElement = document.createElement('p');
+          existsValueElement.innerHTML = '<b>Exists:</b> N/A';
+          card.appendChild(existsValueElement);
+      }
 
-        return card;
-    }
+      // Agregar mensaje de "Existe versión de oro" si hay enlace goldenThumbnail
+      if (pet.configData.goldenThumbnail) {
+          const goldenVersionMessage = document.createElement('p');
+          goldenVersionMessage.innerHTML = "<b>Golden version exists</b>";
+        goldenVersionMessage.style.color = "orange";
+          card.appendChild(goldenVersionMessage);
+      }
+    
+      return card;
+  }
+
 
     // Función para renderizar la paginación
     function renderPagination() {
         const totalPages = Math.ceil(petsData.length / itemsPerPage);
         paginationContainer.innerHTML = '';
-        for (let i = 1; i <= totalPages; i++) {
-            const pageLink = document.createElement('a');
-            pageLink.href = '#';
-            pageLink.textContent = i;
-            pageLink.classList.add('page-link');
-            if (i === currentPage) {
-                pageLink.classList.add('active');
-            }
-            pageLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                currentPage = i;
-                displayPets(currentPage);
-            });
-            paginationContainer.appendChild(pageLink);
+
+        const startPage = Math.max(1, currentPage - 1);
+        const endPage = Math.min(totalPages, currentPage + 1);
+
+        if (startPage > 1) {
+            addPageLink(1, '<<');
         }
+
+        for (let i = startPage; i <= endPage; i++) {
+            addPageLink(i);
+        }
+
+        if (endPage < totalPages) {
+            addPageLink(totalPages, '>>');
+        }
+    }
+
+    function addPageLink(pageNumber, text = pageNumber) {
+        const pageLink = document.createElement('a');
+        pageLink.href = '#';
+        pageLink.textContent = text;
+        pageLink.classList.add('page-link');
+        if (pageNumber === currentPage) {
+            pageLink.classList.add('active');
+        }
+        pageLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            currentPage = pageNumber;
+            displayPets(currentPage);
+        });
+        paginationContainer.appendChild(pageLink);
     }
 
     // Escuchar cambios en el campo de búsqueda
