@@ -97,7 +97,7 @@
           // Agregar el valor de EXISTS a la tarjeta
           if (existsValue !== null) {
               const existsValueElement = document.createElement('p');
-              existsValueElement.textContent = `Exists: ${existsValue}`;
+              existsValueElement.textContent = `Exists: ${numberWithCommas(existsValue)}`;
               card.appendChild(existsValueElement);
           } else {
               const existsValueElement = document.createElement('p');
