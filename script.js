@@ -11,6 +11,10 @@
       const itemsPerPage = 10;
       let currentPage = 1;
 
+    // Mostrar pantalla de carga
+    const loadingContainer = document.getElementById('loadingContainer');
+    loadingContainer.style.display = 'flex';
+
       // Cargar los datos de ps.json
       fetch('/ps.json')
           .then(response => response.json())
@@ -18,9 +22,15 @@
               petsData = jsonData.data;
               displayPets(currentPage);
           })
-          .catch(error => {
-              console.error('Error al cargar los datos de ps.json:', error);
-          });
+        .catch((error) => {
+          console.error('Error al cargar los datos de ps.json:', error);
+        })
+        .finally(() => {
+          // Ocultar pantalla de carga
+          loadingContainer.style.display = 'none';
+          contentContainer.style.visibility = 'visible';
+          contentContainer.style.opacity = '1';
+        });
 
       // Cargar los datos de RAP
       fetch('/rap.json')
